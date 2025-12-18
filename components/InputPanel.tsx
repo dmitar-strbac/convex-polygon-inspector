@@ -25,7 +25,9 @@ export default function InputPanel({
     setPy(String(point.y));
   }, [point.x, point.y]);
 
-  const parsedCount = useMemo(() => parsePointsFromText(verticesText).length, [verticesText]);
+  const parsed = useMemo(() => parsePointsFromText(verticesText), [verticesText]);
+  const vertices = parsed.points;
+  const verticesError = parsed.error;
 
   return (
     <div style={{ display: "grid", gap: 12 }}>
@@ -48,7 +50,12 @@ export default function InputPanel({
           }}
         />
         <div style={{ marginTop: 6, color: "#555", fontSize: 13 }}>
-          Loaded vertices: <b>{parsedCount}</b>
+          Loaded vertices: <b>{vertices.length}</b>
+          {verticesError && (
+            <div style={{ marginTop: 8, color: "#8a1c1c", fontWeight: 600 }}>
+            {verticesError}
+            </div>
+          )}
         </div>
       </div>
 

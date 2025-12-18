@@ -33,22 +33,40 @@ export function ensureCCW(poly: Point[]): Point[] {
   return poly;
 }
 
-export function parsePointsFromText(text: string): Point[] {
-  const lines = text
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
+export function parsePointsFromText(text: string): { points: Point[]; error: string | null } {
+  const lines = text.split(/\r?\n/);
+  const points: Point[] = [];
 
-  const pts: Point[] = [];
-  for (const line of lines) {
-    const parts = line.split(/[,\s]+/).filter(Boolean);
-    if (parts.length < 2) continue;
-    const x = Number(parts[0]);
-    const y = Number(parts[1]);
-    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
-    pts.push({ x, y });
+  const num = `([+-]?(?:\\d+\\.?\\d*|\\.\\d+))`;
+
+  const lineRe = new RegExp(`^${num}(?: ${num}|,${num})$`);
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i].trim();
+    if (!raw) continue;
+
+    const match = raw.match(lineRe);
+    if (!match) {
+      return {
+        points: [],
+        error: `Invalid vertex format on line ${i + 1}: "${raw}". Use exactly "x y" or "x,y".`,
+      };
+    }
+
+    const x = Number(match[1]);
+    const y = Number(match[2] ?? match[3]);
+
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      return {
+        points: [],
+        error: `Invalid number on line ${i + 1}: "${raw}".`,
+      };
+    }
+
+    points.push({ x, y });
   }
-  return pts;
+
+  return { points, error: null };
 }
 
 export function formatPoint(p: Point): string {

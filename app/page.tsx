@@ -19,9 +19,16 @@ export default function Home() {
   const [verticesText, setVerticesText] = useState(DEFAULT_VERTICES);
   const [point, setPoint] = useState<Point>({ x: 2.5, y: 2.5 });
 
-  const vertices = useMemo(() => parsePointsFromText(verticesText), [verticesText]);
+  const parsed = useMemo(() => parsePointsFromText(verticesText), [verticesText]);
+  const vertices = parsed.points;
+  const verticesError = parsed.error;
 
-  const check = useMemo(() => pointInConvexPolygon(vertices, point), [vertices, point]);
+  const check = useMemo(() => {
+    if (verticesError) {
+      return { status: "OUTSIDE" as const, message: verticesError };
+    }
+    return pointInConvexPolygon(vertices, point);
+  }, [vertices, point, verticesError]);
 
   return (
     <main style={{ padding: 20, fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }}>
@@ -30,7 +37,7 @@ export default function Home() {
           <div>
             <h1 style={{ margin: 0, fontSize: 26 }}>Convex Polygon Inspector</h1>
             <p style={{ margin: "6px 0 0", color: "#555" }}>
-              Check whether a point lies inside a convex polygon (O(log n)).
+              Check whether a point lies inside a convex polygon.
             </p>
           </div>
 
@@ -53,7 +60,14 @@ export default function Home() {
           </section>
 
           <section style={{ border: "1px solid #eee", borderRadius: 16, padding: 14, background: "white" }}>
+            {verticesError ? (
+              <div style={{ color: "#8a1c1c", fontWeight: 600 }}>
+                Fix the vertices input to display the canvas.
+                <div style={{ marginTop: 8, fontWeight: 400 }}>{verticesError}</div>
+              </div>
+            ) : (
             <PolygonCanvas vertices={vertices} point={point} setPoint={setPoint} />
+          )}
           </section>
         </div>
 

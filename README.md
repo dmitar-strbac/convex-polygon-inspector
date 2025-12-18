@@ -57,7 +57,6 @@ The entire computation is performed on the frontend; no backend or data persiste
 
 ### Prerequisites
 - **Node.js ≥ 20.9.0**
-
 - npm
 
 ### Steps
@@ -141,4 +140,6 @@ demonstrate both problem-solving skills and practical software engineering abili
 
 ## 👤 Author
 
-**Dmitar Štrbac**
+**Dmitar Štrbac**  
+📧 Contact: dmitarstrbac04@gmail.com   
+🗓️ 2025

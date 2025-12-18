@@ -7,6 +7,12 @@ export default function ResultBadge({ status }: { status: CheckStatus }) {
     ON_EDGE: { background: "#fff8e6", color: "#7a5a00", border: "1px solid #ffe2a8" },
   };
 
+  const LABELS: Record<CheckStatus, string> = {
+    INSIDE: "INSIDE",
+    OUTSIDE: "OUTSIDE",
+    ON_EDGE: "ON EDGE",
+  };
+
   return (
     <span
       style={{
@@ -18,7 +24,7 @@ export default function ResultBadge({ status }: { status: CheckStatus }) {
         letterSpacing: "0.04em",
       }}
     >
-      {status}
+      {LABELS[status]}
     </span>
   );
 }
