@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Convex Polygon Inspector
 
-## Getting Started
+A small interactive web application that checks whether a given point lies **inside**, **outside**, or **on the edge** of a **convex polygon**.
 
-First, run the development server:
+The application visualizes the polygon and the point on a canvas and performs the geometric check using an efficient **O(log n)** algorithm.
+
+---
+
+## 🧩 Features
+
+- Manual input of polygon vertices  
+- Manual input of point coordinates (X, Y)
+- Interactive canvas:
+  - Polygon is rendered visually
+  - Clicking on the canvas updates the point automatically
+- Real-time result:
+  - **INSIDE**
+  - **OUTSIDE**
+  - **ON_EDGE**
+- Clean and simple UI
+- Efficient geometric algorithm for convex polygons
+
+---
+
+## 🧠 Algorithm
+
+The solution is based on computational geometry principles and leverages the fact that the polygon is **convex**.
+
+### Key ideas:
+- The polygon vertices are normalized to **counter-clockwise (CCW)** order
+- A **binary search** is used to locate the triangle sector that may contain the point
+- Orientation (cross product) tests determine the final position of the point
+- Edge cases are handled carefully to distinguish:
+  - interior points
+  - boundary points
+  - exterior points
+
+### Time Complexity:
+- **O(log n)** per point check
+
+This approach is significantly faster than linear edge checks and is well-suited for convex polygons.
+
+---
+
+## 🛠️ Technologies Used
+
+- **Next.js** (React framework)
+- **TypeScript**
+- **HTML5 Canvas**
+- **CSS**
+
+The entire computation is performed on the frontend; no backend or data persistence is required.
+
+---
+
+## ▶️ How to Run the Project
+
+### Prerequisites
+- **Node.js ≥ 20.9.0**
+
+- npm
+
+### Steps
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+Then open your browser at:
+http://localhost:3000
+
+📥 Input Format
+Polygon vertices
+
+- One vertex per line
+- Supported formats:
+
+   ```bash
+   x y
+   x,y
+   ```
+
+
+Example:
+
+```bash
+0 0
+6 0
+8 3
+6 6
+0 6
+-2 3
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Point
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Enter X and Y manually
+- Or click anywhere on the canvas to set the point interactively
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚠️ Notes
 
-## Learn More
+- The algorithm assumes the polygon is convex
+- Supplying a non-convex polygon may lead to incorrect results
+- Floating-point precision is handled using a small epsilon tolerance
 
-To learn more about Next.js, take a look at the following resources:
+## 📌 Purpose
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project was created as a **software engineering practice task** to demonstrate:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- algorithmic thinking
+- computational geometry knowledge
+- clean TypeScript code
+- interactive frontend development
 
-## Deploy on Vercel
+## 💡 Solution Idea and Technology Choice
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The idea of the solution is to efficiently determine whether a given point lies inside,
+outside, or on the boundary of a convex polygon, while also providing a clear visual
+representation of the problem.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Instead of using a straightforward linear scan over all polygon edges, the solution
+leverages the convexity of the polygon to achieve a logarithmic time complexity.
+By fixing one vertex and applying binary search combined with orientation (cross product)
+tests, the algorithm locates the relevant triangle sector and determines the position
+of the point in O(log n) time.
+
+This approach was chosen because it demonstrates algorithmic thinking and knowledge
+of computational geometry, while also being more efficient than the naive O(n) solution.
+Special attention was given to correctly handling boundary cases, such as points lying
+exactly on polygon edges.
+
+The application is implemented using Next.js and TypeScript. TypeScript provides strong
+type safety for geometric primitives such as points and vectors, reducing the likelihood
+of logical errors. Next.js and React were selected to quickly build an interactive user
+interface and to visually demonstrate the algorithm using an HTML5 canvas.
+
+The interactive visualization allows users to input polygon vertices manually or place
+the point directly on the canvas, making the solution both intuitive and easy to test.
+This combination of efficient algorithms and clear visualization was chosen to best
+demonstrate both problem-solving skills and practical software engineering abilities.
+
+## 👤 Author
+
+**Dmitar Štrbac**

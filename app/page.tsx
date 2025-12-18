@@ -1,65 +1,66 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo, useState } from "react";
+import InputPanel from "@/components/InputPanel";
+import PolygonCanvas from "@/components/PolygonCanvas";
+import ResultBadge from "@/components/ResultBadge";
+import type { Point } from "@/lib/types";
+import { parsePointsFromText } from "@/lib/helpers";
+import { pointInConvexPolygon } from "@/lib/convex";
+
+const DEFAULT_VERTICES = `0 0
+6 0
+8 3
+6 6
+0 6
+-2 3`;
 
 export default function Home() {
+  const [verticesText, setVerticesText] = useState(DEFAULT_VERTICES);
+  const [point, setPoint] = useState<Point>({ x: 2.5, y: 2.5 });
+
+  const vertices = useMemo(() => parsePointsFromText(verticesText), [verticesText]);
+
+  const check = useMemo(() => pointInConvexPolygon(vertices, point), [vertices, point]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main style={{ padding: 20, fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gap: 18 }}>
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 26 }}>Convex Polygon Inspector</h1>
+            <p style={{ margin: "6px 0 0", color: "#555" }}>
+              Check whether a point lies inside a convex polygon (O(log n)).
+            </p>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <ResultBadge status={check.status} />
+          </div>
+        </header>
+
+        <div style={{ display: "grid", gridTemplateColumns: "420px 1fr", gap: 18, alignItems: "start" }}>
+          <section style={{ border: "1px solid #eee", borderRadius: 16, padding: 14, background: "white" }}>
+            <InputPanel
+              verticesText={verticesText}
+              setVerticesText={setVerticesText}
+              point={point}
+              setPoint={setPoint}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div style={{ marginTop: 12, fontSize: 13, color: "#444" }}>
+              <b>Result:</b> {check.message}
+            </div>
+          </section>
+
+          <section style={{ border: "1px solid #eee", borderRadius: 16, padding: 14, background: "white" }}>
+            <PolygonCanvas vertices={vertices} point={point} setPoint={setPoint} />
+          </section>
         </div>
-      </main>
-    </div>
+
+        <footer style={{ color: "#666", fontSize: 12 }}>
+          Note: The algorithm assumes the polygon is convex. If a non-convex polygon is provided, the result may be incorrect.
+        </footer>
+      </div>
+    </main>
   );
 }
